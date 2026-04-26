@@ -216,9 +216,9 @@ def render_month_calendar(data: pd.DataFrame, year: int, month: int, active_view
     <style>
       .cal-grid {display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px;}
       .cal-head {font-weight:700; color:#374151; text-align:center; padding:6px 0;}
-      .day-cell {border:1px solid #e5e7eb; border-radius:10px; min-height:130px; background:#fff; padding:8px;}
+      .day-cell {border:1px solid #e5e7eb; border-radius:10px; min-height:130px; background:#fff; padding:8px; overflow:hidden;}
       .day-cell.today {background:#fffbeb; border-color:#f59e0b;}
-      .day-number {font-size:16px; font-weight:800; color:#111827; margin-bottom:8px;}
+      .day-number {font-size:16px; font-weight:800; color:#111827; margin-bottom:8px; display:inline-block;}
       .day-link {text-decoration:none;}
       .event-link {text-decoration:none; display:block; margin-bottom:6px;}
       .event-box {padding:6px 8px; border-radius:8px; font-size:12px; color:#111827; border:1px solid rgba(0,0,0,0.08);}
@@ -244,12 +244,9 @@ def render_month_calendar(data: pd.DataFrame, year: int, month: int, active_view
             is_today = current_date == date.today()
             day_cls = "day-cell today" if is_today else "day-cell"
             day_rows = grouped.get(day_num, [])
-            new_link = (
-                f"?view={active_view}&year={year}&month={month}&new_date={current_date.isoformat()}"
-            )
-
-            html += f"<a class='day-link' href='{new_link}'><div class='{day_cls}'>"
-            html += f"<div class='day-number'>{day_num}</div>"
+            new_link = f"?view={active_view}&year={year}&month={month}&new_date={current_date.isoformat()}"
+            html += f"<div class='{day_cls}'>"
+            html += f"<a class='day-link day-number' href='{new_link}'>{day_num}</a>"
 
             if not day_rows:
                 html += "<div class='muted'>일정 없음</div>"
@@ -266,7 +263,7 @@ def render_month_calendar(data: pd.DataFrame, year: int, month: int, active_view
                         f"<div>{item['업무내용']}</div>"
                         "</div></a>"
                     )
-            html += "</div></a>"
+            html += "</div>"
     html += "</div>"
     st.markdown(html, unsafe_allow_html=True)
 
